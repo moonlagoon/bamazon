@@ -1,13 +1,16 @@
+DROP DATABASE IF EXISTS bamazon_db;
+CREATE DATABASE bamazon_db;
 
-    CREATE TABLE products (
-	item_id INT(11) NOT NULL AUTO_INCREMENT,
-    products_name VARCHAR NOT NULL,
-    products_id INT(11) NOT NULL,
+USE bamazon_db;
+
+CREATE TABLE products (
+	item_id INT NOT NULL AUTO_INCREMENT,
+    product_name TEXT NOT NULL,
+    department_name TEXT NOT NULL,
     price DECIMAL(10, 2) NOT NULL,
-    stock_quantity INT(11) NOT NULL,
+    stock_quantity INT NOT NULL,
     product_sales DECIMAL(10, 2),
     PRIMARY KEY (item_id)
-    KEY department_id (department_id)
 );
 
 INSERT INTO products (product_name, department_name, price, stock_quantity) VALUES
@@ -21,3 +24,5 @@ INSERT INTO products (product_name, department_name, price, stock_quantity) VALU
 ('Volley Ball Net', 'Sports & Outdoors', 39.99, 50),
 ('Monopoly', 'Toys and Games', 18.44, 450),
 ('Rustic Gray Dining Set', 'Home and Kitchen', 824.99, 60);
+
+SELECT * FROM bamazon_db.products;
