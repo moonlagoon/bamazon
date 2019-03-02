@@ -1,8 +1,6 @@
 var mysql = require('mysql');
 var inquirer = require('inquirer');
-var http = require('http');
 
-// var server = http.createServer(handleRequest);
 var connection = mysql.createConnection({
     host: 'localhost',
     port: 3306,
@@ -12,13 +10,6 @@ var connection = mysql.createConnection({
 });
 
 
-
-///////////////
-// FUNCTIONS //
-///////////////
-
-
-// Connects to database and console logs connection
 connection.connect(function(err) {
     if (err) throw err;
     console.log("Connected as id " + connection.threadId);
@@ -26,13 +17,12 @@ connection.connect(function(err) {
 })
 
 
-// Starts Bamazon 
 var start = function() {
     connection.query('SELECT * FROM products', function(err, res) {
         for (var i = 0; i < res.length; i++) {
             console.log('');
-            console.log('Department Name: ' + res[i].departmentName);
-            console.log('Item Id: ' + res[i].itemID + '|' + ' Product: ' + res[i].productName + '|' + ' Price: $' + res[i].price + '|' + ' In Stock: ' + res[i].stockQuantity);
+            console.log('Department Name: ' + res[i].department);
+            console.log('Item Id: ' + res[i].item_id + '|' + ' Product: ' + res[i].product_name + '|' + ' Price: $' + res[i].price + '|' + ' In Stock: ' + res[i].stock_quantity);
             console.log('-----------------------------------------------------------------------');
         }
         purchaseItem();
@@ -40,10 +30,9 @@ var start = function() {
 
 }
 
-// Function to purchase an item.
 var purchaseItem = function() {
     inquirer.prompt([{
-        name: "itemID",
+        name: "item_id",
         type: "input",
         message: "What item would you like to purchase? Select using ID.",
         validate: function(value) {
@@ -55,7 +44,7 @@ var purchaseItem = function() {
         }
 
     }, {
-        name: "stockQuantity",
+        name: "stock_quantity",
         type: "input",
         message: "How many would you like to purchase?",
         validate: function(value) {
@@ -67,20 +56,20 @@ var purchaseItem = function() {
         }
 
     }]).then(function(answer) {
-        connection.query('SELECT * FROM products WHERE itemID = ?', [answer.itemID], function(err, res) {
+        connection.query('SELECT * FROM products WHERE item_id = ?', [answer.item_id], function(err, res) {
             console.log(res);
-            if (answer.stockQuantity > res[0].stockQuantity) {
+            if (answer.stock_quantity > res[0].stock_quantity) {
                 console.log('Not enough in stock');
                 console.log('Go on, git!');
                 quitBamazon();
             } else {
-                priceTotal = res[0].price * answer.stockQuantity;
-                currentDepartment = res[0].departmentName;
+                priceTotal = res[0].price * answer.stock_quantity;
+                currentDepartment = res[0].department;
                 console.log('Your Total Amount is $' + priceTotal);
                 console.log('Thanks for your order');
                 console.log('');
-                var math = res[0].stockQuantity - parseInt(answer.stockQuantity);
-                connection.query('UPDATE products SET stockQuantity= ' + math + ' WHERE itemID =' + answer.itemID);
+                var math = res[0].stock_quantity - parseInt(answer.stock_quantity);
+                connection.query('UPDATE products SET stock_quantity= ' + math + ' WHERE item_id =' + answer.item_id);
                 quitBamazon();
             }
         });
@@ -88,8 +77,6 @@ var purchaseItem = function() {
 
 };
 
-
-// Function to quit Bamazon
 var quitBamazon = function() {
     connection.end();
 }
