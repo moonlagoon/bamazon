@@ -30,7 +30,7 @@ var start = function() {
         for (var i = 0; i < res.length; i++) {
             console.log('');
             console.log('Department Name: ' + res[i].departmentName);
-            console.log('Item Id: ' + res[i].itemID + '|' + ' Product: ' + res[i].productName + '|' + ' Price: $' + res[i].price + '|' + ' In Stock: ' + res[i].stockQuantity);
+            console.log('Item Id: ' + res[i].products + '|' + ' Product: ' + res[i].productName + '|' + ' Price: $' + res[i].price + '|' + ' In Stock: ' + res[i].stock_quantity);
             console.log('-----------------------------------------------------------------------');
         }
         purchaseItem();
@@ -41,11 +41,11 @@ var start = function() {
 // Function to purchase an item.
 var purchaseItem = function() {
     inquirer.prompt([{
-        name: "itemID",
+        name: "products",
         type: "input",
         message: "What item would you like to purchase? Select using ID.",
         validate: function(value) {
-            var valid = value.match(/^[0-9]+$/)
+            var valid = value.match(/^[0-9]+$/) //selecting
             if (valid) {
                 return true
             }
@@ -53,7 +53,7 @@ var purchaseItem = function() {
         }
 
     }, {
-        name: "stockQuantity",
+        name: "stock_quantity",
         type: "input",
         message: "How many would you like to purchase?",
         validate: function(value) {
@@ -65,20 +65,20 @@ var purchaseItem = function() {
         }
 
     }]).then(function(answer) {
-        connection.query('SELECT * FROM products WHERE itemID = ?', [answer.itemID], function(err, res) {
+        connection.query('SELECT * FROM products WHERE products = ?', [answer.products], function(err, res) {
             console.log(res);
-            if (answer.stockQuantity > res[0].stockQuantity) {
+            if (answer.stock_quantity > res[0].stock_quantity) {
                 console.log('Not enough in stock');
                 console.log('Go on, git!');
                 quitBamazon();
             } else {
-                priceTotal = res[0].price * answer.stockQuantity;
+                priceTotal = res[0].price * answer.stock_quantity;
                 currentDepartment = res[0].departmentName;
                 console.log('Your Total Amount is $' + priceTotal);
                 console.log('Thanks for your order');
                 console.log('');
-                var math = res[0].stockQuantity - parseInt(answer.stockQuantity);
-                connection.query('UPDATE products SET stockQuantity= ' + math + ' WHERE itemID =' + answer.itemID);
+                var math = res[0].stock_quantity - parseInt(answer.stock_quantity);
+                connection.query('UPDATE products SET stock_quantity= ' + math + ' WHERE products =' + answer.products);
                 quitBamazon();
             }
         });
@@ -86,8 +86,6 @@ var purchaseItem = function() {
 
 };
 
-
-// Function to quit Bamazon
 var quitBamazon = function() {
     connection.end();
 }
