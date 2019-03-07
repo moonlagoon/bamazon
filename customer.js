@@ -1,5 +1,6 @@
 var mysql = require('mysql');
 var inquirer = require('inquirer');
+var color = require('cli-color');
 
 var connection = mysql.createConnection({
     host: 'localhost',
@@ -15,7 +16,6 @@ connection.connect(function(err) {
     console.log("Connected as id " + connection.threadId);
     start();
 })
-
 
 var start = function() {
     connection.query('SELECT * FROM products', function(err, res) {
